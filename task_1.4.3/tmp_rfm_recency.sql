@@ -1,7 +1,9 @@
 insert into analysis.tmp_rfm_recency
-select 
-	user_id,
-	ntile(5) over(ORDER BY MAX(order_ts))
-from orders o 
+(user_id, recency)
+select
+	o.user_id,
+	ntile(5) over(ORDER BY MAX(o.order_ts)) as recency
+from orders o
+left join analysis.users u on o.user_id = u.id
 where o.status = 4
-group by user_id
+group by o.user_id;
